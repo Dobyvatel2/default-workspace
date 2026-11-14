@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101512">
+  <meta name="description" content="Gambit is a beautifully simple PGN reader and chess training room. Import games, replay the classics, and sharpen your recall move by move.">
+  <title>Gambit — PGN reader & chess practice</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-first" viewBox="0 0 24 24"><path d="M18 18 10 12l8-6M6 18V6"/></symbol>
+      <symbol id="i-last" viewBox="0 0 24 24"><path d="m6 6 8 6-8 6M18 6v12"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="2.5"/></symbol>
+      <symbol id="i-flip" viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3M17 8l3 3M7 16l-3 3"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12m0 0 5-5m-5 5-5-5M4 20h16"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 16 .7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+      <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h4M17 14h.01"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15m0 0-5-5m5 5-5 5"/></symbol>
+      <symbol id="i-chess-knight" viewBox="0 0 24 24"><path d="M7 21h10M8 18h8M9 15h6l1.5-5.5-3-.8.8-4.2-2.8 1.6L10 3.5l.5 4.2-2.8 2L9 15Z" stroke-linejoin="round"/><circle cx="10.7" cy="9.4" r=".7" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 9A7 7 0 0 1 19 8M18 15a7 7 0 0 1-13 .9"/></symbol>
+      <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" id="brandHome" aria-label="Gambit home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M9 27h14M10.5 23.5h11M12 20.5h8l2-7-4-1 1-5.5-3.5 2L13 5.5l.7 5.5-3.2 2.5 1.5 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="13.7" cy="12.6" r=".9" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-word">Gambit<span>.</span></span>
+    </a>
+    <div class="topbar-divider" aria-hidden="true"></div>
+    <p class="topbar-tag">PGN reader <span>&</span> practice room</p>
+    <div class="topbar-actions">
+      <div class="streak-pill" id="streakPill" title="Consecutive days with a completed practice session">
+        <svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>
+        <b id="streakCount">0</b><span>day streak</span>
+      </div>
+      <button class="icon-btn topbar-icon" id="shortcutsBtn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">
+        <svg class="ico" aria-hidden="true"><use href="#i-keyboard"/></svg>
+      </button>
+      <button class="btn btn-primary btn-import" id="importBtn">
+        <svg class="ico" aria-hidden="true"><use href="#i-plus"/></svg>
+        <span>Import PGN</span>
+      </button>
+      <button class="icon-btn mobile-library-btn" id="mobileLibraryBtn" aria-label="Open game library">
+        <svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="library-panel" id="libraryPanel" aria-label="Game library">
+      <div class="library-head">
+        <div>
+          <p class="eyebrow">Your collection</p>
+          <h1>The Library</h1>
+        </div>
+        <span class="count-badge" id="gameCount">0</span>
+        <button class="icon-btn library-close" id="libraryClose" aria-label="Close library">
+          <svg class="ico" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </div>
+
+      <label class="search-field" for="gameSearch">
+        <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+        <input id="gameSearch" type="search" placeholder="Search players, events…" autocomplete="off" spellcheck="false">
+        <kbd>/</kbd>
+      </label>
+
+      <div class="filter-row" role="group" aria-label="Filter games">
+        <button class="filter-chip is-active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="starred">Starred</button>
+        <button class="filter-chip" data-filter="imported">Imported</button>
+      </div>
+
+      <div class="game-list" id="gameList" role="list"></div>
+
+      <div class="library-foot">
+        <button class="drop-card" id="dropCard">
+          <span class="drop-card-icon"><svg class="ico" aria-hidden="true"><use href="#i-upload"/></svg></span>
+          <span><strong>Drop a PGN here</strong><small>Or click to browse your files</small></span>
+        </button>
+        <p class="library-meta"><span id="libraryMeta">0 games</span><span>·</span><span>Stored on this device</span></p>
+      </div>
+    </aside>
+
+    <section class="reader-panel" aria-label="Game reader">
+      <div class="reader-head">
+        <div class="game-context">
+          <div class="context-top">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="contextEvent">The Opera Game</span>
+            <span class="context-sep">/</span>
+            <span id="contextRound">Paris, 1858</span>
+          </div>
+          <h2 class="context-players" id="contextPlayers">Morphy <em>vs</em> Duke Karl & Count Isouard</h2>
+        </div>
+        <div class="reader-actions">
+          <button class="icon-btn" id="starBtn" aria-label="Star this game" title="Star this game">
+            <svg class="ico" aria-hidden="true"><use href="#i-star"/></svg>
+          </button>
+          <button class="icon-btn" id="flipBtn" aria-label="Flip board" title="Flip board (F)">
+            <svg class="ico" aria-hidden="true"><use href="#i-flip"/></svg>
+          </button>
+          <button class="icon-btn" id="copyPgnBtn" aria-label="Copy PGN" title="Copy PGN">
+            <svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="board-column">
+        <div class="player-row player-top" id="playerTop">
+          <div class="player-identity">
+            <span class="player-color" aria-hidden="true"></span>
+            <span class="player-name" id="topName">Duke Karl & Count Isouard</span>
+            <span class="player-title" id="topTitle"></span>
+          </div>
+          <div class="player-captures" id="topCaptures" aria-label="Captured pieces"></div>
+          <span class="player-material" id="topMaterial"></span>
+        </div>
+
+        <div class="board-zone">
+          <div class="board-frame">
+            <div class="board" id="board" role="grid" aria-label="Chess board"></div>
+            <div class="board-corner corner-tl" id="cornerTL"></div>
+            <div class="board-corner corner-br" id="cornerBR"></div>
+            <div class="promotion-menu" id="promotionMenu" role="dialog" aria-label="Choose promotion piece" hidden></div>
+          </div>
+          <div class="board-eval" id="boardEval" aria-hidden="true"><span class="eval-bar-fill"></span></div>
+        </div>
+
+        <div class="player-row player-bottom" id="playerBottom">
+          <div class="player-identity">
+            <span class="player-color" aria-hidden="true"></span>
+            <span class="player-name" id="bottomName">Paul Morphy</span>
+            <span class="player-title" id="bottomTitle"></span>
+          </div>
+          <div class="player-captures" id="bottomCaptures" aria-label="Captured pieces"></div>
+          <span class="player-material" id="bottomMaterial"></span>
+        </div>
+
+        <div class="explore-bar" id="exploreBar" hidden>
+          <span><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg> Exploring a sideline</span>
+          <button class="text-btn" id="exitExploreBtn">Return to score</button>
+        </div>
+
+        <div class="transport">
+          <div class="transport-controls">
+            <button class="icon-btn" id="firstBtn" title="First move (Home)" aria-label="Go to start">
+              <svg class="ico" aria-hidden="true"><use href="#i-first"/></svg>
+            </button>
+            <button class="icon-btn" id="prevBtn" title="Previous move (←)" aria-label="Previous move">
+              <svg class="ico" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+            </button>
+            <button class="play-btn" id="playBtn" title="Play through game (Space)" aria-label="Play through game">
+              <svg class="ico play-icon" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+            <button class="icon-btn" id="nextBtn" title="Next move (→)" aria-label="Next move">
+              <svg class="ico" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </button>
+            <button class="icon-btn" id="lastBtn" title="Last move (End)" aria-label="Go to final position">
+              <svg class="ico" aria-hidden="true"><use href="#i-last"/></svg>
+            </button>
+          </div>
+          <div class="timeline-wrap">
+            <div class="timeline-meta">
+              <span id="timelineMove">Starting position</span>
+              <span id="timelineTurn">White to move</span>
+            </div>
+            <input class="timeline" id="timeline" type="range" min="0" max="1" value="0" step="1" aria-label="Game position">
+          </div>
+        </div>
+      </div>
+
+      <p class="reader-hint"><span>←</span> <span>→</span> to step &nbsp;·&nbsp; <span>Space</span> to play &nbsp;·&nbsp; <span>F</span> to flip</p>
+    </section>
+
+    <aside class="studio-panel" aria-label="Study and training">
+      <div class="studio-tabs" role="tablist" aria-label="Study panels">
+        <button class="studio-tab is-active" id="tab-moves" data-tab="moves" role="tab" aria-selected="true" aria-controls="panelMoves">Moves</button>
+        <button class="studio-tab" id="tab-train" data-tab="train" role="tab" aria-selected="false" aria-controls="panelTrain">
+          Train <span class="tab-spark"></span>
+        </button>
+        <button class="studio-tab" id="tab-details" data-tab="details" role="tab" aria-selected="false" aria-controls="panelDetails">Details</button>
+      </div>
+
+      <div class="studio-body">
+        <section class="studio-panel-view is-active" id="panelMoves" role="tabpanel" aria-labelledby="tab-moves">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">Score sheet</p>
+              <h3>Move log</h3>
+            </div>
+            <button class="text-btn" id="movesCopyBtn">
+              <svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg> Copy PGN
+            </button>
+          </div>
+          <div class="move-log-wrap">
+            <div class="move-log-head"><span>#</span><span>White</span><span>Black</span></div>
+            <div class="move-log" id="moveLog" role="listbox" aria-label="Moves"></div>
+          </div>
+          <div class="note-card" id="noteCard">
+            <div class="note-head">
+              <span class="note-icon"><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg></span>
+              <span id="noteLabel">Study note</span>
+              <span class="note-move" id="noteMove"></span>
+            </div>
+            <p id="noteText">Select a move to read its annotation.</p>
+          </div>
+          <div class="moments">
+            <div class="section-heading"><h4>Game pulse</h4><span id="momentCount">0 key moments</span></div>
+            <div class="moment-list" id="momentList"></div>
+          </div>
+        </section>
+
+        <section class="studio-panel-view" id="panelTrain" role="tabpanel" aria-labelledby="tab-train" hidden>
+          <div class="train-idle" id="trainIdle">
+            <div class="panel-title-row train-title-row">
+              <div>
+                <p class="eyebrow">Practice room</p>
+                <h3>Make it stick.</h3>
+              </div>
+              <span class="practice-mark"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg></span>
+            </div>
+            <p class="train-lede">Read a game once. Then let the board ask you what happens next.</p>
+
+            <div class="mode-switch" role="tablist" aria-label="Training mode">
+              <button class="mode-btn is-active" data-mode="guess" role="tab" aria-selected="true">
+                <span class="mode-icon"><svg class="ico" aria-hidden="true"><use href="#i-chess-knight"/></svg></span>
+                <span><b>Guess the move</b><small>Recall the game</small></span>
+              </button>
+              <button class="mode-btn" data-mode="coords" role="tab" aria-selected="false">
+                <span class="mode-icon"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg></span>
+                <span><b>Coordinates</b><small>Know the board</small></span>
+              </button>
+            </div>
+
+            <div class="train-setup" id="guessSetup">
+              <div class="setup-block">
+                <span class="setup-label">Play as</span>
+                <div class="segmented" id="colorChoice">
+                  <button class="seg is-active" data-color="w">White</button>
+                  <button class="seg" data-color="b">Black</button>
+                  <button class="seg" data-color="both">Both</button>
+                </div>
+              </div>
+              <div class="setup-block">
+                <span class="setup-label">Begin from</span>
+                <div class="segmented" id="startChoice">
+                  <button class="seg is-active" data-start="current">This position</button>
+                  <button class="seg" data-start="start">Move one</button>
+                </div>
+              </div>
+              <div class="session-size">
+                <span class="setup-label">Session</span>
+                <strong id="questionEstimate">10 questions</strong>
+                <span class="muted" id="questionEstimateNote">one side</span>
+              </div>
+              <button class="btn btn-primary btn-wide" id="startGuessBtn">
+                Start practice <svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              </button>
+              <p class="setup-footnote">Every question is taken from this score sheet. No engine, no noise — just recall.</p>
+            </div>
+
+            <div class="train-stats" id="guessStats">
+              <div class="stat"><span>All-time attempts</span><b id="statAttempts">0</b></div>
+              <div class="stat"><span>Accuracy</span><b id="statAccuracy">—</b></div>
+              <div class="stat"><span>Best streak</span><b id="statBestStreak">0</b></div>
+            </div>
+
+            <div class="coord-setup" id="coordSetup" hidden>
+              <div class="coordinate-hero">
+                <span class="coord-eyebrow">Find the square</span>
+                <strong id="coordDemo">e4</strong>
+                <p>Click the named square on an empty board. Sixty seconds. How many can you find?</p>
+              </div>
+              <div class="coord-stats">
+                <div><span>Personal best</span><b id="coordBest">0</b></div>
+                <div><span>Best streak</span><b id="coordStreak">0</b></div>
+              </div>
+              <button class="btn btn-primary btn-wide" id="startCoordBtn">Start 60-second drill <svg class="ico" aria-hidden="true"><use href="#i-timer"/></svg></button>
+              <p class="setup-footnote">The board will be empty. The coordinates are always visible.</p>
+            </div>
+          </div>
+
+          <div class="train-session" id="trainSession" hidden>
+            <div class="session-head">
+              <div class="session-copy">
+                <p class="eyebrow" id="sessionEyebrow">Guess the move</p>
+                <h3 id="sessionPrompt">Your move.</h3>
+              </div>
+              <button class="icon-btn" id="exitTrainBtn" title="End session" aria-label="End training session">
+                <svg class="ico" aria-hidden="true"><use href="#i-close"/></svg>
+              </button>
+            </div>
+            <div class="session-progress">
+              <div class="progress-track"><span id="sessionProgressBar"></span></div>
+              <div class="progress-meta"><span id="sessionProgressText">Question 1 of 10</span><span id="sessionScore">0 pts</span></div>
+            </div>
+
+            <div class="coach-card" id="coachCard" aria-live="polite">
+              <span class="coach-icon" id="coachIcon"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg></span>
+              <div class="coach-copy">
+                <b id="coachTitle">Find the game move</b>
+                <p id="coachText">White to move. Play the move from the score sheet.</p>
+              </div>
+            </div>
+
+            <div class="guess-actions" id="guessActions">
+              <button class="btn btn-quiet" id="hintBtn"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg> Hint</button>
+              <button class="btn btn-quiet" id="skipBtn">Skip <svg class="ico" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+            </div>
+            <button class="btn btn-primary btn-wide next-question-btn" id="nextQuestionBtn" hidden>
+              Next position <svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+            </button>
+
+            <div class="session-footer">
+              <div><span>Streak</span><b id="sessionStreak">0</b></div>
+              <div><span>Correct</span><b id="sessionCorrect">0 / 0</b></div>
+              <div><span>Accuracy</span><b id="sessionAccuracy">—</b></div>
+            </div>
+          </div>
+
+          <div class="train-session coord-live" id="coordSession" hidden>
+            <div class="session-head">
+              <div class="session-copy">
+                <p class="eyebrow">Coordinates</p>
+                <h3>Find the square.</h3>
+              </div>
+              <button class="icon-btn" id="exitCoordBtn" title="End drill" aria-label="End coordinates drill">
+                <svg class="ico" aria-hidden="true"><use href="#i-close"/></svg>
+              </button>
+            </div>
+            <div class="coordinate-hero">
+              <span class="coord-eyebrow">Locate</span>
+              <strong id="coordTarget">e4</strong>
+              <p>Click the named square on the empty board.</p>
+            </div>
+            <div class="coord-timer">
+              <div class="progress-track"><span id="coordTimeBar"></span></div>
+              <div class="progress-meta"><span>Time remaining</span><span id="coordTimeLabel">60s</span></div>
+            </div>
+            <div class="coord-drill-stats">
+              <div><span>Found</span><b id="coordScore">0</b></div>
+              <div><span>Streak</span><b id="coordStreakNow">0</b></div>
+              <div><span>Accuracy</span><b id="coordAccuracy">—</b></div>
+            </div>
+            <div class="coach-card" id="coordCoach" aria-live="polite">
+              <span class="coach-icon"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg></span>
+              <div class="coach-copy">
+                <b id="coordCoachTitle">Eyes on the board</b>
+                <p id="coordCoachText">Click the square named above. The labels are your friend.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="train-summary" id="trainSummary" hidden>
+            <div class="summary-burst" aria-hidden="true"><svg><use href="#i-spark"/></svg></div>
+            <p class="eyebrow">Session complete</p>
+            <h3 id="summaryTitle">Well read.</h3>
+            <div class="summary-score"><strong id="summaryAccuracy">0%</strong><span id="summaryScore">0 of 0 found</span></div>
+            <p class="summary-note" id="summaryNote">Every rep makes the pattern a little more familiar.</p>
+            <button class="btn btn-primary btn-wide" id="trainAgainBtn"><svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg> Practice again</button>
+            <button class="btn btn-quiet btn-wide" id="backToSetupBtn">Change settings</button>
+          </div>
+        </section>
+
+        <section class="studio-panel-view" id="panelDetails" role="tabpanel" aria-labelledby="tab-details" hidden>
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">About this game</p>
+              <h3 id="detailTitle">Morphy’s Opera Game</h3>
+            </div>
+            <button class="icon-btn" id="detailStarBtn" aria-label="Star this game" title="Star this game">
+              <svg class="ico" aria-hidden="true"><use href="#i-star"/></svg>
+            </button>
+          </div>
+          <div class="result-banner" id="resultBanner">
+            <div><span id="detailWhite">Morphy</span><small>White</small></div>
+            <strong id="detailResult">1–0</strong>
+            <div><span id="detailBlack">Duke Karl & Count Isouard</span><small>Black</small></div>
+          </div>
+          <dl class="meta-grid">
+            <div><dt>Event</dt><dd id="metaEvent">—</dd></div>
+            <div><dt>Site</dt><dd id="metaSite">—</dd></div>
+            <div><dt>Date</dt><dd id="metaDate">—</dd></div>
+            <div><dt>Round</dt><dd id="metaRound">—</dd></div>
+            <div><dt>Opening</dt><dd id="metaOpening">—</dd></div>
+            <div><dt>Moves</dt><dd id="metaMoves">—</dd></div>
+          </dl>
+          <div class="insight-block">
+            <div class="section-heading"><h4>Reading notes</h4><span id="detailNoteCount">0 notes</span></div>
+            <div class="insight-grid" id="insightGrid"></div>
+          </div>
+          <div class="pgn-block">
+            <div class="section-heading"><h4>Raw PGN</h4><button class="text-btn" id="detailCopyBtn"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg> Copy</button></div>
+            <textarea id="pgnRaw" readonly spellcheck="false" aria-label="Raw PGN"></textarea>
+          </div>
+          <button class="btn btn-danger-quiet btn-wide" id="deleteGameBtn" hidden>
+            <svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg> Remove from library
+          </button>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <div class="mobile-scrim" id="mobileScrim" hidden></div>
+  <div class="drop-overlay" id="dropOverlay" hidden>
+    <div class="drop-overlay-inner">
+      <span><svg class="ico" aria-hidden="true"><use href="#i-upload"/></svg></span>
+      <h2>Drop your PGN to import</h2>
+      <p>One game or a whole tournament — it all lands in your library.</p>
+    </div>
+  </div>
+
+  <dialog class="import-dialog" id="importDialog">
+    <form method="dialog" class="dialog-form" id="importForm">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">New in the library</p>
+          <h2>Import a game</h2>
+        </div>
+        <button class="icon-btn" type="button" id="closeImportBtn" aria-label="Close">
+          <svg class="ico" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <div class="import-tabs" role="tablist" aria-label="Import method">
+        <button type="button" class="import-tab is-active" data-import="paste" role="tab" aria-selected="true">Paste PGN</button>
+        <button type="button" class="import-tab" data-import="file" role="tab" aria-selected="false">Choose file</button>
+      </div>
+      <div class="import-pane" id="pastePane">
+        <label class="sr-only" for="pgnInput">Paste PGN text</label>
+        <textarea id="pgnInput" placeholder="[Event &quot;A game worth studying&quot;]
+[White &quot;White&quot;]
+[Black &quot;Black&quot;]
+[Result &quot;*&quot;]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 …" spellcheck="false"></textarea>
+        <div class="import-paste-foot">
+          <button type="button" class="text-btn" id="loadSampleBtn">Try a sample</button>
+          <span>Headers, comments and annotations are supported.</span>
+        </div>
+      </div>
+      <div class="import-pane" id="filePane" hidden>
+        <button type="button" class="file-zone" id="fileZone">
+          <span class="file-zone-icon"><svg class="ico" aria-hidden="true"><use href="#i-upload"/></svg></span>
+          <strong>Select a .pgn file</strong>
+          <small>or drag and drop it anywhere on this page</small>
+        </button>
+        <input type="file" id="fileInput" accept=".pgn,text/plain,application/x-chess-pgn" hidden>
+      </div>
+      <p class="import-error" id="importError" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <span class="dialog-note"><svg class="ico" aria-hidden="true"><use href="#i-info"/></svg> Files never leave your device.</span>
+        <div class="dialog-buttons">
+          <button type="button" class="btn btn-quiet" id="cancelImportBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="confirmImportBtn">Import game</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="shortcuts-dialog" id="shortcutsDialog">
+    <form method="dialog" class="dialog-form">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">Never leave the board</p>
+          <h2>Keyboard shortcuts</h2>
+        </div>
+        <button class="icon-btn" type="button" id="closeShortcutsBtn" aria-label="Close">
+          <svg class="ico" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <div class="shortcut-list">
+        <div><span>Step through the game</span><kbd>←</kbd><kbd>→</kbd></div>
+        <div><span>Jump to start / finish</span><kbd>Home</kbd><kbd>End</kbd></div>
+        <div><span>Play or pause</span><kbd>Space</kbd></div>
+        <div><span>Flip the board</span><kbd>F</kbd></div>
+        <div><span>Import a PGN</span><kbd>I</kbd></div>
+        <div><span>Focus the library search</span><kbd>/</kbd></div>
+        <div><span>Close a dialog or session</span><kbd>Esc</kbd></div>
+      </div>
+      <div class="dialog-actions">
+        <span class="dialog-note">Practice sessions follow the main line.</span>
+        <button type="submit" class="btn btn-primary">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script src="js/engine.js" defer></script>
+  <script src="js/pgn.js" defer></script>
+  <script src="js/samples.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
